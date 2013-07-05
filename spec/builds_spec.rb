@@ -39,7 +39,7 @@ describe ArtifactoryApi::Client::Builds do
     runs = @builds.get_runs_for_build "MyBuild"
 
     expect(runs.length).to eq(1)
-    expect(runs[0][:run]).to eq("149")
+    expect(runs[0][:number]).to eq("149")
     expect(runs[0][:started]).to eq("2013-03-14T16:07:43.636+0000")
 
   end
@@ -57,10 +57,10 @@ describe ArtifactoryApi::Client::Builds do
     runs = @builds.get_runs_for_build "MyBuild"
 
     expect(runs.length).to eq(4)
-    expect(runs[0][:run]).to eq("149")
-    expect(runs[1][:run]).to eq("222")
-    expect(runs[2][:run]).to eq("379")
-    expect(runs[3][:run]).to eq("2464")
+    expect(runs[0][:number]).to eq("149")
+    expect(runs[1][:number]).to eq("222")
+    expect(runs[2][:number]).to eq("379")
+    expect(runs[3][:number]).to eq("2464")
 
   end
 
@@ -74,7 +74,7 @@ describe ArtifactoryApi::Client::Builds do
 
     run_info = @builds.get_run_info "MyBuild","430"
 
-    expect(run_info[:run]).to eq("430")
+    expect(run_info[:number]).to eq("430")
     expect(run_info[:name]).to eq("MyBuild")
   end
 

@@ -34,18 +34,18 @@ module ArtifactoryApi
 
         response_json["buildsNumbers"].map do |build|
           {
-            :run => build["uri"].sub(/^\//,''),
+            :number => build["uri"].sub(/^\//,''),
             :uri => build["uri"],
             :started => build["started"]
           }
-        end.sort{|x,y| x[:run].to_i <=> y[:run].to_i}
+        end.sort{|x,y| x[:number].to_i <=> y[:number].to_i}
       end
 
       def get_run_info build,run
         response_json = @client.api_get_request("/api/build/#{build}/#{run}")
         return nil unless response_json
         result = response_json["buildInfo"]
-        result[:run] = result["number"]
+        result[:number] = result["number"]
         result[:name] = result["name"]
         result
       end
