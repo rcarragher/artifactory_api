@@ -47,6 +47,7 @@ describe ArtifactoryApi::Client::Builds do
   it "should sort runs by the run number" do
      the_response = {"buildsNumbers" => [
                       {"uri" => "/149","started" => "2013-03-14T16:07:43.636+0000"},
+                      {"uri" => "/2464","started" => "2013-03-14T16:07:43.636+0000"},
                       {"uri" => "/379","started" => "2013-06-10T19:38:05.857+0000"},
                       {"uri" => "/222","started" => "2013-04-25T19:39:26.464+0000"}],
                     "uri" => "https://artifactory-1.ampaxs.net/api/build/Server"}
@@ -55,10 +56,11 @@ describe ArtifactoryApi::Client::Builds do
 
     runs = @builds.get_runs_for_build "MyBuild"
 
-    expect(runs.length).to eq(3)
+    expect(runs.length).to eq(4)
     expect(runs[0][:run]).to eq("149")
     expect(runs[1][:run]).to eq("222")
     expect(runs[2][:run]).to eq("379")
+    expect(runs[3][:run]).to eq("2464")
 
   end
 

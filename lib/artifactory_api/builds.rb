@@ -38,7 +38,7 @@ module ArtifactoryApi
             :uri => build["uri"],
             :started => build["started"]
           }
-        end.sort{|x,y| x[:run] <=> y[:run]}
+        end.sort{|x,y| x[:run].to_i <=> y[:run].to_i}
       end
 
       def get_run_info build,run
