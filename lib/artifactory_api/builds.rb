@@ -11,13 +11,20 @@ module ArtifactoryApi
         "#<ArtifactoryApi::Client::Builds"
       end
 
+      #Returns an array of hashes, containing a "name" key and a "last_built" key
+      #The api returns build names with a starting slash, this will remove them.
       def list_all
         response_json = @client.api_get_request("/api/build")
-        @logger.debug response_json
-        if response_json
-          response_json["builds"].map { |build| build["uri"] }.sort
-        end
-        response_json 
+
+        return nil unless response_json
+
+        response_json["builds"].map do |build|
+          {
+            :name => build["uri"].sub(/^\//,''),
+            :last_built => build["lastStarted"]
+          }
+        end.sort{ |x,y| x[:name] <=> y[:name]}
+
       end
 
       def get_runs_for_build build
