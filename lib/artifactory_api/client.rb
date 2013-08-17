@@ -4,7 +4,6 @@ require 'uri'
 require 'json'
 require 'net/http'
 require 'net/https'
-require 'rest-client'
 
 module ArtifactoryApi
   class Client
