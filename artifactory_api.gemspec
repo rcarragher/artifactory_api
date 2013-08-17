@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'artifactory_api'
-  s.version     = '0.0.5'
-  s.date        = '2013-07-02'
+  s.version     = '0.0.6'
+  s.date        = '2013-08-07'
   s.summary     = "artfifactory_api consumes the artifactory rest api to do useful stuff"
   s.description = "A client to the artifactory rest api"
   s.authors     = ["Rick Carragher"]

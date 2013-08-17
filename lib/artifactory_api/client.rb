@@ -4,6 +4,7 @@ require 'uri'
 require 'json'
 require 'net/http'
 require 'net/https'
+require 'rest-client'
 
 module ArtifactoryApi
   class Client
@@ -139,6 +140,17 @@ module ArtifactoryApi
         handle_exception(response, "raw")
       else
         handle_exception(response, "body", send_json=true)
+      end
+    end
+
+    # Sends a PUT request to the Artifactory server with the specified URL
+    def api_put_request(url_prefix,data)
+      url_prefix = "#{@ssl ? 'https://': 'http://'}#{@server_ip}:#{@server_port}#{@artifactory_path}/#{url_prefix}"
+      encode = Base64.encode64("#{@username}:#{@password}")
+      req = Net::HTTP::Put.new(url_prefix, { 'Content-Type' => 'text/plain','Authorization' => "Basic #{encode}"})
+      req.body = data
+      Net::HTTP.start(@server_ip,@server_port) do |http|
+        http.request(req)
       end
     end
 
