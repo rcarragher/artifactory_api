@@ -74,5 +74,9 @@ describe ArtifactoryApi::Client do
     it "should return a Build object when you ask for it" do
       expect(@client.builds.class).to eq(ArtifactoryApi::Client::Builds)
     end
+
+    it "should return a Artifacts object when you ask for it" do
+      expect(@client.artifacts.class).to eq(ArtifactoryApi::Client::Artifacts)
+    end
   end
 end

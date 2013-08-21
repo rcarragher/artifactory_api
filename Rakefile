@@ -1,6 +1,7 @@
 
 
 task :default => [:test]
+task :spec => :test
 
 require 'rspec/core'
 require 'rspec/core/rake_task'

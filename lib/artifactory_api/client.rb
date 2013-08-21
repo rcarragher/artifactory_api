@@ -76,6 +76,10 @@ module ArtifactoryApi
       ArtifactoryApi::Client::Builds.new(self)
     end
 
+    def artifacts
+      ArtifactoryApi::Client::Artifacts.new(self)
+    end
+
     # Returns a string representing the class name
     #
     # @return [String] string representation of class name
