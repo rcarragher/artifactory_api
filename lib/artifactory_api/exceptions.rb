@@ -10,8 +10,7 @@ module ArtifactoryApi
     # RuntimeError.
     #
     class ApiException < RuntimeError
-      def initialize(logger, message = "", log_level = Logger::ERROR)
-        logger.add(log_level) { "#{self.class}: #{message}" }
+      def initialize( message = "")
         super(message)
       end
     end
@@ -20,9 +19,9 @@ module ArtifactoryApi
     # to connect to Artifactory.
     #
     class Unauthorized < ApiException
-      def initialize(logger, message = "", log_level = Logger::ERROR)
+      def initialize( message = "")
         msg = "Invalid credentials are provided. #{message}"
-        super(logger, msg, Logger::FATAL)
+        super(msg)
       end
     end
 
@@ -30,9 +29,9 @@ module ArtifactoryApi
     # to connect to Artifactory.
     #
     class Forbidden < ApiException
-      def initialize(logger, message = "", log_level = Logger::ERROR)
+      def initialize( message = "")
         msg = "Forbiddent exception #{message}"
-        super(logger, msg)
+        super(msg)
       end
     end
 
@@ -40,10 +39,10 @@ module ArtifactoryApi
     # the Artifactory API.
     #
     class NotFound < ApiException
-      def initialize(logger, message = "", log_level = Logger::ERROR)
+      def initialize( message = "")
         msg = "Requested component is not found on Artifactory" \
           if message.empty?
-        super(logger, msg)
+        super(msg)
       end
     end
 
@@ -51,9 +50,9 @@ module ArtifactoryApi
     # 500 Internel Server Error.
     #
     class InternalServerError < ApiException
-      def initialize(logger, message = "", log_level = Logger::ERROR)
+      def initialize( message = "")
         msg = "Internel Server Error. #{message}"
-        super(logger, msg)
+        super(msg)
       end
     end
   
@@ -61,9 +60,9 @@ module ArtifactoryApi
     # or reloaded where the response code returned is 503
     #
     class ServiceUnavailable < ApiException
-      def initialize(logger, message = "", log_level = Logger::ERROR)
+      def initialize( message = "")
         msg = "Artifactory is unavailable #{message}"
-        super(logger, msg)
+        super(msg)
       end
     end
 

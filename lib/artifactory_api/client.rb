@@ -143,13 +143,19 @@ module ArtifactoryApi
     end
 
     # Sends a PUT request to the Artifactory server with the specified URL
-    def api_put_request(url_prefix,data)
-      url_prefix = "#{@ssl ? 'https://': 'http://'}#{@server_ip}:#{@server_port}#{@artifactory_path}/#{url_prefix}"
-      encode = Base64.encode64("#{@username}:#{@password}")
-      req = Net::HTTP::Put.new(url_prefix, { 'Content-Type' => 'text/plain','Authorization' => "Basic #{encode}"})
+    def api_put_request(url_prefix,data, raw_response = false)
+      to_put = URI.escape(url_prefix)
+      req = Net::HTTP::Put.new(to_put)
       req.body = data
-      Net::HTTP.start(@server_ip,@server_port) do |http|
-        http.request(req)
+      # Net::HTTP.start(@server_ip,@server_port) do |http|
+      #   http.request(req)
+      # end
+      @logger.info "PUT #{to_put}"
+      response = make_http_request(req)
+      if raw_response
+        handle_exception(response, "raw")
+      else
+        handle_exception(response, "body", send_json=true)
       end
     end
 
@@ -178,7 +184,7 @@ module ArtifactoryApi
     #   Artifactory that are not categorized in the API Client.
     #
     def handle_exception(response, to_send = "code", send_json = false)
-      msg = "HTTP Code: #{response.code}, Response Body: #{response.body}"
+      msg = "ArtifactoryAPI HTTP Code: #{response.code}, Response Body: #{response.body}"
       @logger.debug msg
       case response.code.to_i
         when 200, 201, 302
@@ -192,23 +198,22 @@ module ArtifactoryApi
             return response
           end
         when 400
-          matched = response.body.match(/<p>(.*)<\/p>/)
+          matched = response.body.match(/<p>(.*)<br\s*\/>/)
           api_message = matched[1] unless matched.nil?
-          @logger.debug "API message: #{api_message}"
-          raise Exceptions::ApiException.new(@logger, api_message)
+          @logger.info "API message: #{api_message}"
+          raise Exceptions::ApiException.new(api_message)
         when 401
-          raise Exceptions::Unauthorized.new @logger
+          raise Exceptions::Unauthorized.new
         when 403
-          raise Exceptions::Forbidden.new @logger
+          raise Exceptions::Forbidden.new
         when 404
-          raise Exceptions::NotFound.new @logger
+          raise Exceptions::NotFound.new
         when 500
-          raise Exceptions::InternalServerError.new @logger
+          raise Exceptions::InternalServerError.new
         when 503
-          raise Exceptions::ServiceUnavailable.new @logger
+          raise Exceptions::ServiceUnavailable.new
         else
           raise Exceptions::ApiException.new(
-            @logger,
             "Error code #{response.code}"
           )
       end
