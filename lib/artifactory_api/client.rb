@@ -12,17 +12,17 @@ module ArtifactoryApi
     DEFAULT_SERVER_PORT = 80
 
     VALID_PARAMS = [
-      "server_url",
-      "server_ip",
-      "server_port",
-      "artifactory_path",
-      "username",
-      "password",
-      "password_base64",
-      "log_location",
-      "log_level",
-      "ssl",
-      "follow_redirects"
+        "server_url",
+        "server_ip",
+        "server_port",
+        "artifactory_path",
+        "username",
+        "password",
+        "password_base64",
+        "log_location",
+        "log_level",
+        "ssl",
+        "follow_redirects"
     ].freeze
 
     def initialize(args)
@@ -35,7 +35,7 @@ module ArtifactoryApi
       # Server IP or Server URL must be specified
       unless @server_ip || @server_url
         raise ArgumentError, "Server IP or Server URL is required to connect" +
-          " to Artifactory"
+            " to Artifactory"
       end
 
       # Username/password are optional as some artifactory servers do not require
@@ -44,17 +44,17 @@ module ArtifactoryApi
         raise ArgumentError, "If username is provided, password is required"
       end
 
-      # Get info from the server_url, if we got one
+                                         # Get info from the server_url, if we got one
       if @server_url
-        server_uri = URI.parse(@server_url)
-        @server_ip = server_uri.host
-        @server_port = server_uri.port
-        @ssl = server_uri.scheme == "https"
+        server_uri        = URI.parse(@server_url)
+        @server_ip        = server_uri.host
+        @server_port      = server_uri.port
+        @ssl              = server_uri.scheme == "https"
         @artifactory_path = server_uri.path
       end
 
       @artifactory_path ||= ""
-      @artifactory_path.gsub!(/\/$/,"") # remove trailing slash if there is one
+      @artifactory_path.gsub!(/\/$/, "") # remove trailing slash if there is one
 
       @server_port = DEFAULT_SERVER_PORT unless @server_port
       @ssl ||= false
@@ -62,7 +62,7 @@ module ArtifactoryApi
       # Setting log options
       @log_location = STDOUT unless @log_location
       @log_level = Logger::INFO unless @log_level
-      @logger = Logger.new(@log_location)
+      @logger       = Logger.new(@log_location)
       @logger.level = @log_level
 
       # Base64 decode inserts a newline character at the end. As a workaround
@@ -102,7 +102,7 @@ module ArtifactoryApi
       http = Net::HTTP.new(@server_ip, @server_port)
 
       if @ssl
-        http.use_ssl = true
+        http.use_ssl     = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
@@ -114,13 +114,14 @@ module ArtifactoryApi
           # our tail)
           if follow_redirect
             redir_uri = URI.parse(response['location'])
-            response = make_http_request(
-              Net::HTTP::Get.new(redir_uri.path, false)
+            response  = make_http_request(
+                Net::HTTP::Get.new(redir_uri.path, false)
             )
           end
       end
       return response
     end
+
     protected :make_http_request
 
 
@@ -134,28 +135,39 @@ module ArtifactoryApi
     #
     def api_get_request(url_prefix, raw_response = false)
       url_prefix = "#{@artifactory_path}#{url_prefix}"
-
-      to_get = URI.escape(url_prefix)
-      request = Net::HTTP::Get.new(to_get)
+      to_get     = URI.escape(url_prefix)
+      request    = Net::HTTP::Get.new(to_get)
       @logger.info "GET #{to_get}"
-      response = make_http_request(request)
-      if raw_response
-        handle_exception(response, "raw")
-      else
-        handle_exception(response, "body", send_json=true)
-      end
+      exec_request(request, raw_response)
     end
 
     # Sends a PUT request to the Artifactory server with the specified URL
-    def api_put_request(url_prefix,data, raw_response = false)
-      to_put = URI.escape(url_prefix)
-      req = Net::HTTP::Put.new(to_put)
-      req.body = data
-      # Net::HTTP.start(@server_ip,@server_port) do |http|
-      #   http.request(req)
-      # end
+    def api_put_request(url_prefix, data, raw_response = false)
+      to_put       = URI.escape(url_prefix)
+      request      = Net::HTTP::Put.new(to_put)
+      request.body = data
       @logger.info "PUT #{to_put}"
-      response = make_http_request(req)
+      exec_request(request, raw_response, data)
+    end
+
+    # Sends a POST request to the Artifactory server with the specified URL
+    def api_post_request(url_prefix, raw_response = false, data=nil)
+      to_post = URI.escape(url_prefix)
+      request = Net::HTTP::Post.new(to_post)
+      @logger.info "POST #{to_post}"
+      exec_request(request, raw_response, data)
+    end
+
+    #
+    # @param [Net::HTTP::Get Put or Post] request
+    # @param [Boolean] raw_response Return complete Response object instead of
+    #   JSON body of response
+    # @param [String] data String to be sent as body of the request
+
+    # @return [String, JSON] Response returned whether loaded JSON or raw
+    def exec_request(request, raw_response=false, data=nil)
+      request.body = data if !data.nil?
+      response = make_http_request(request)
       if raw_response
         handle_exception(response, "raw")
       else
@@ -218,11 +230,11 @@ module ArtifactoryApi
           raise Exceptions::ServiceUnavailable.new
         else
           raise Exceptions::ApiException.new(
-            "Error code #{response.code}"
-          )
+                    "Error code #{response.code}"
+                )
       end
     end
-
-
   end
 end
+
+

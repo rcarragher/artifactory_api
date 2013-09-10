@@ -25,6 +25,11 @@ module ArtifactoryApi
         url = "/api/storage/#{repo}#{path}"
         @client.api_get_request url
       end
+
+      def copy_artifact from_repo, from_path, to_repo, to_path
+        url = "/api/copy/#{from_repo}#{from_path}?to=/#{to_repo}#{to_path}"
+        @client.api_post_request url
+      end
     end
   end
 end
