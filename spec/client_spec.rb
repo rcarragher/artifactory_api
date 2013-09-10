@@ -20,9 +20,9 @@ describe ArtifactoryApi::Client do
       expect(
         lambda do
           ArtifactoryApi::Client.new({
-                                       :server_ip   => '127.0.0.1',
-                                       :server_port => 8080
-                                     })
+              :server_ip   => '127.0.0.1',
+              :server_port => 8080
+            })
         end
       ).not_to raise_error
     end
