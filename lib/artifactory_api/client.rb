@@ -12,17 +12,17 @@ module ArtifactoryApi
     DEFAULT_SERVER_PORT = 80
 
     VALID_PARAMS = [
-        "server_url",
-        "server_ip",
-        "server_port",
-        "artifactory_path",
-        "username",
-        "password",
-        "password_base64",
-        "log_location",
-        "log_level",
-        "ssl",
-        "follow_redirects"
+      "server_url",
+      "server_ip",
+      "server_port",
+      "artifactory_path",
+      "username",
+      "password",
+      "password_base64",
+      "log_location",
+      "log_level",
+      "ssl",
+      "follow_redirects"
     ].freeze
 
     def initialize(args)
@@ -35,7 +35,7 @@ module ArtifactoryApi
       # Server IP or Server URL must be specified
       unless @server_ip || @server_url
         raise ArgumentError, "Server IP or Server URL is required to connect" +
-            " to Artifactory"
+          " to Artifactory"
       end
 
       # Username/password are optional as some artifactory servers do not require
@@ -44,12 +44,12 @@ module ArtifactoryApi
         raise ArgumentError, "If username is provided, password is required"
       end
 
-                                         # Get info from the server_url, if we got one
+      # Get info from the server_url, if we got one
       if @server_url
-        server_uri        = URI.parse(@server_url)
-        @server_ip        = server_uri.host
-        @server_port      = server_uri.port
-        @ssl              = server_uri.scheme == "https"
+        server_uri = URI.parse(@server_url)
+        @server_ip = server_uri.host
+        @server_port = server_uri.port
+        @ssl = server_uri.scheme == "https"
         @artifactory_path = server_uri.path
       end
 
@@ -62,7 +62,7 @@ module ArtifactoryApi
       # Setting log options
       @log_location = STDOUT unless @log_location
       @log_level = Logger::INFO unless @log_level
-      @logger       = Logger.new(@log_location)
+      @logger = Logger.new(@log_location)
       @logger.level = @log_level
 
       # Base64 decode inserts a newline character at the end. As a workaround
@@ -102,7 +102,7 @@ module ArtifactoryApi
       http = Net::HTTP.new(@server_ip, @server_port)
 
       if @ssl
-        http.use_ssl     = true
+        http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
 
@@ -114,8 +114,8 @@ module ArtifactoryApi
           # our tail)
           if follow_redirect
             redir_uri = URI.parse(response['location'])
-            response  = make_http_request(
-                Net::HTTP::Get.new(redir_uri.path, false)
+            response = make_http_request(
+              Net::HTTP::Get.new(redir_uri.path, false)
             )
           end
       end
@@ -135,16 +135,16 @@ module ArtifactoryApi
     #
     def api_get_request(url_prefix, raw_response = false)
       url_prefix = "#{@artifactory_path}#{url_prefix}"
-      to_get     = URI.escape(url_prefix)
-      request    = Net::HTTP::Get.new(to_get)
+      to_get = URI.escape(url_prefix)
+      request = Net::HTTP::Get.new(to_get)
       @logger.info "GET #{to_get}"
       exec_request(request, raw_response)
     end
 
     # Sends a PUT request to the Artifactory server with the specified URL
     def api_put_request(url_prefix, data, raw_response = false)
-      to_put       = URI.escape(url_prefix)
-      request      = Net::HTTP::Put.new(to_put)
+      to_put = URI.escape(url_prefix)
+      request = Net::HTTP::Put.new(to_put)
       request.body = data
       @logger.info "PUT #{to_put}"
       exec_request(request, raw_response, data)
@@ -230,7 +230,7 @@ module ArtifactoryApi
           raise Exceptions::ServiceUnavailable.new
         else
           raise Exceptions::ApiException.new(
-                    "Error code #{response.code}"
+                  "Error code #{response.code}"
                 )
       end
     end
