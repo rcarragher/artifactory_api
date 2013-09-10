@@ -7,10 +7,10 @@ describe ArtifactoryApi::Client do
       expect(
         lambda do
           ArtifactoryApi::Client.new(
-            :server_ip   => '127.0.0.1',
+            :server_ip => '127.0.0.1',
             :server_port => 8080,
-            :username    => 'username',
-            :password    => 'password'
+            :username => 'username',
+            :password => 'password'
           )
         end
       ).not_to raise_error
@@ -20,7 +20,7 @@ describe ArtifactoryApi::Client do
       expect(
         lambda do
           ArtifactoryApi::Client.new(
-            :server_ip   => '127.0.0.1',
+            :server_ip => '127.0.0.1',
             :server_port => 8080
           )
         end
@@ -32,8 +32,8 @@ describe ArtifactoryApi::Client do
         lambda do
           ArtifactoryApi::Client.new(
             :server_url => 'http://localhost',
-            :username   => 'username',
-            :password   => 'password'
+            :username => 'username',
+            :password => 'password'
           )
         end
       ).not_to raise_error
@@ -44,7 +44,7 @@ describe ArtifactoryApi::Client do
         lambda do
           ArtifactoryApi::Client.new(
             :server_url => 'http://localhost',
-            :username   => 'user_id'
+            :username => 'user_id'
           )
         end
       ).to raise_error
@@ -63,10 +63,10 @@ describe ArtifactoryApi::Client do
   context "With valid credentials given" do
     before do
       @client = ArtifactoryApi::Client.new(
-        :server_ip    => '127.0.0.1',
-        :server_port  => 8080,
-        :username     => 'username',
-        :password     => 'password',
+        :server_ip => '127.0.0.1',
+        :server_port => 8080,
+        :username => 'username',
+        :password => 'password',
         :log_location => '/dev/null'
       )
     end
