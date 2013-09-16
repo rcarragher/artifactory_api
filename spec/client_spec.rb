@@ -19,10 +19,10 @@ describe ArtifactoryApi::Client do
     it "should initialize when username/password not specified" do
       expect(
         lambda do
-          ArtifactoryApi::Client.new({
+          ArtifactoryApi::Client.new(
             :server_ip => '127.0.0.1',
             :server_port => 8080
-          })
+          )
         end
       ).not_to raise_error
     end
@@ -54,12 +54,12 @@ describe ArtifactoryApi::Client do
       expect(
         lambda do
           ArtifactoryApi::Client.new(
-            :username => "user", :password=>"password")
+            :username => "user", :password => "password")
         end
       ).to raise_error
     end
   end
-  
+
   context "With valid credentials given" do
     before do
       @client = ArtifactoryApi::Client.new(
@@ -79,4 +79,5 @@ describe ArtifactoryApi::Client do
       expect(@client.artifacts.class).to eq(ArtifactoryApi::Client::Artifacts)
     end
   end
+
 end

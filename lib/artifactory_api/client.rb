@@ -54,7 +54,7 @@ module ArtifactoryApi
       end
 
       @artifactory_path ||= ""
-      @artifactory_path.gsub!(/\/$/,"") # remove trailing slash if there is one
+      @artifactory_path.gsub!(/\/$/, "") # remove trailing slash if there is one
 
       @server_port = DEFAULT_SERVER_PORT unless @server_port
       @ssl ||= false
@@ -121,6 +121,7 @@ module ArtifactoryApi
       end
       return response
     end
+
     protected :make_http_request
 
 
@@ -134,28 +135,39 @@ module ArtifactoryApi
     #
     def api_get_request(url_prefix, raw_response = false)
       url_prefix = "#{@artifactory_path}#{url_prefix}"
-
       to_get = URI.escape(url_prefix)
       request = Net::HTTP::Get.new(to_get)
       @logger.info "GET #{to_get}"
-      response = make_http_request(request)
-      if raw_response
-        handle_exception(response, "raw")
-      else
-        handle_exception(response, "body", send_json=true)
-      end
+      exec_request(request, raw_response)
     end
 
     # Sends a PUT request to the Artifactory server with the specified URL
-    def api_put_request(url_prefix,data, raw_response = false)
+    def api_put_request(url_prefix, data, raw_response = false)
       to_put = URI.escape(url_prefix)
-      req = Net::HTTP::Put.new(to_put)
-      req.body = data
-      # Net::HTTP.start(@server_ip,@server_port) do |http|
-      #   http.request(req)
-      # end
+      request = Net::HTTP::Put.new(to_put)
+      request.body = data
       @logger.info "PUT #{to_put}"
-      response = make_http_request(req)
+      exec_request(request, raw_response, data)
+    end
+
+    # Sends a POST request to the Artifactory server with the specified URL
+    def api_post_request(url_prefix, raw_response = false, data=nil)
+      to_post = URI.escape(url_prefix)
+      request = Net::HTTP::Post.new(to_post)
+      @logger.info "POST #{to_post}"
+      exec_request(request, raw_response, data)
+    end
+
+    #
+    # @param [Net::HTTP::Get Put or Post] request
+    # @param [Boolean] raw_response Return complete Response object instead of
+    #   JSON body of response
+    # @param [String] data String to be sent as body of the request
+
+    # @return [String, JSON] Response returned whether loaded JSON or raw
+    def exec_request(request, raw_response=false, data=nil)
+      request.body = data if !data.nil?
+      response = make_http_request(request)
       if raw_response
         handle_exception(response, "raw")
       else
@@ -218,11 +230,11 @@ module ArtifactoryApi
           raise Exceptions::ServiceUnavailable.new
         else
           raise Exceptions::ApiException.new(
-            "Error code #{response.code}"
-          )
+                  "Error code #{response.code}"
+                )
       end
     end
-
-
   end
 end
+
+
